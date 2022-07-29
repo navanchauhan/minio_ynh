@@ -18,8 +18,8 @@
     },
     "license": "free",
     "maintainer": {
-        "name": "John doe",
-        "email": "john.doe@example.com"
+        "name": "Navan Chauhan",
+        "email": "minio@navan.email"
     },
     "requirements": {
         "yunohost": ">= 4.3.0"
