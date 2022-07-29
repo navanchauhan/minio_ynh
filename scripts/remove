@@ -16,6 +16,7 @@ ynh_script_progression --message="Loading installation settings..." --time --wei
 
 app=$YNH_APP_INSTANCE_NAME
 
+consoledomain=$(ynh_app_setting_get --app=$app --key=consoledomain)
 domain=$(ynh_app_setting_get --app=$app --key=domain)
 port=$(ynh_app_setting_get --app=$app --key=port)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
@@ -74,8 +75,12 @@ fi
 #=================================================
 ynh_script_progression --message="Removing NGINX web server configuration..." --time --weight=1
 
-# Remove the dedicated NGINX config
+# Remove the dedicated NGINX config for the server
 ynh_remove_nginx_config
+
+# Remove the dedicated NGINX config for the console
+ynh_secure_remove --file="/etc/nginx/conf.d/$consoledomain.d/$app.conf"
+ynh_systemd_action --service_name=nginx --action=reload
 
 #=================================================
 # CLOSE A PORT
