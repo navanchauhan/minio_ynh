@@ -35,9 +35,16 @@
                 "type": "domain"
             },
             {
+                "name": "console_domain",
+                "type": "domain"
+            },
+            {
                 "name": "is_public",
                 "type": "boolean",
-                "default": true
+                "default": true,
+                "help": {
+                    "en": "Make the console publically accessible"
+                }
             }
         ]
     }
