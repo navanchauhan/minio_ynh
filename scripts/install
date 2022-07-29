@@ -99,7 +99,7 @@ ynh_add_nginx_config
 
 # Create a dedicated NGINX config got the console
 
-local finalnginxconf="/etc/nginx/conf.d/$consoledomain.d/$app.conf"
+finalnginxconf="/etc/nginx/conf.d/$consoledomain.d/$app.conf"
 
 if [ "${path_url:-}" != "/" ]; then
 	ynh_replace_string --match_string="^#sub_path_only" --replace_string="" --target_file="$YNH_APP_BASEDIR/conf/nginx2.conf"
