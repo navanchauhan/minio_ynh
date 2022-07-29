@@ -60,7 +60,7 @@ ynh_script_progression --message="Finding an available port..." --time --weight=
 port=$(ynh_find_port --port=9000)
 consoleport=$(ynh_find_port --port=9001)
 ynh_app_setting_set --app=$app --key=port --value=$port
-ynh_app_setting_set --app=$app --key=consoleport --value=$console_port
+ynh_app_setting_set --app=$app --key=consoleport --value=$consoleport
 
 #=================================================
 # CREATE DEDICATED USER
