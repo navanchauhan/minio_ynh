@@ -7,7 +7,9 @@ Type=simple
 User=__APP__
 Group=__APP__
 WorkingDirectory=__FINALPATH__/
-ExecStart=__FINALPATH__/script
+ExecStart=__FINALPATH__/minio --address=:__PORT__ --console-address=__CONSOLEPORT__ --certs-dir=/etc/yunohost/certs/__DOMAIN__ __DATADIR__
+Environment="MINIO_SERVER_URL=__DOMAIN__"
+Environment="MINIO_BROWSER_REDIRECT_URL=__DOMAIN__/console"
 StandardOutput=append:/var/log/__APP__/__APP__.log
 StandardError=inherit
 
