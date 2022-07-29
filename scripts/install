@@ -167,6 +167,9 @@ ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$ap
 #=================================================
 ynh_script_progression --message="Configuring permissions..." --time --weight=1
 
+# Allow S3 for everyone
+ynh_permission_update --permission="main" --add="visitors" --protected
+
 ynh_permission_create --permission="console" --url="$consoledomain/" --allowed="$admin" --label="MinIO Console" --show_tile="true"
 
 # Make app public if necessary
