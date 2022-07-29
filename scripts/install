@@ -30,7 +30,7 @@ path_url=/
 is_public=$YNH_APP_ARG_IS_PUBLIC
 
 app=$YNH_APP_INSTANCE_NAME
-app_console="$app_console"
+app_console="${app}_console"
 
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
