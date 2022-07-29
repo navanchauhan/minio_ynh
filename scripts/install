@@ -25,6 +25,7 @@ ynh_abort_if_errors
 #=================================================
 
 domain=$YNH_APP_ARG_DOMAIN
+consoledomain=$YHN_APP_ARG_CONSOLE_DOMAIN
 path_url=/
 is_public=$YNH_APP_ARG_IS_PUBLIC
 
@@ -40,6 +41,7 @@ test ! -e "$final_path" || ynh_die --message="This path already contains a folde
 
 # Register (book) web path
 ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
+ynh_webpath_register --app=$app --domain=$consoledomain --path_url=$path_url
 
 #=================================================
 # STORE SETTINGS FROM MANIFEST
@@ -47,6 +49,7 @@ ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
 ynh_script_progression --message="Storing installation settings..." --time --weight=1
 
 ynh_app_setting_set --app=$app --key=domain --value=$domain
+ynh_app_setting_set --app=$app --key=consoledomain --value=$consoledomain
 ynh_app_setting_set --app=$app --key=path --value=$path_url
 
 #=================================================
@@ -80,6 +83,7 @@ ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 ynh_setup_source --dest_dir="$final_path" --source_id=$YNH_ARCH
 
 chmod 750 "$final_path"
+chmod +x "$final_path/minio"
 chmod -R o-rwx "$final_path"
 chown -R $app:www-data "$final_path"
 
@@ -88,8 +92,22 @@ chown -R $app:www-data "$final_path"
 #=================================================
 ynh_script_progression --message="Configuring NGINX web server..." --time --weight=1
 
-# Create a dedicated NGINX config
+# Create a dedicated NGINX config for the server
 ynh_add_nginx_config
+
+# Create a dedicated NGINX config got the console
+
+local finalnginxconf="/etc/nginx/conf.d/$consoledomain.d/$app.conf"
+
+if [ "${path_url:-}" != "/" ]; then
+	ynh_replace_string --match_string="^#sub_path_only" --replace_string="" --target_file="$YNH_APP_BASEDIR/conf/nginx2.conf"
+else
+	ynh_replace_string --match_string="^#root_path_only" --replace_string="" --target_file="$YNH_APP_BASEDIR/conf/nginx2.conf"
+fi
+
+ynh_add_config --template="$YNH_APP_BASEDIR/conf/nginx2.conf" --destination="$finalnginxconf"
+
+ynh_systemd_action --service_name=nginx --action=reload
 
 #=================================================
 # SPECIFIC SETUP
