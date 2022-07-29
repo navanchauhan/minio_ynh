@@ -14,6 +14,8 @@ ProtectProc=invisible
 ExecStart=__FINALPATH__/minio server --address=127.0.0.1:__PORT__ --console-address=127.0.0.1:__CONSOLEPORT__ --certs-dir=/etc/yunohost/certs/__DOMAIN__ __DATADIR__
 Environment="MINIO_SERVER_URL=https://__DOMAIN__"
 Environment="MINIO_BROWSER_REDIRECT_URL=https://__CONSOLEDOMAIN__"
+Environment="MINIO_ROOT_USER=__ADMIN__"
+Environment="MINIO_ROOT_PASSWORD=__PASSWORD__"
 
 # Let systemd restart this service always
 Restart=always
