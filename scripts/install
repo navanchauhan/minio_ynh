@@ -28,6 +28,8 @@ domain=$YNH_APP_ARG_DOMAIN
 consoledomain=$YNH_APP_ARG_CONSOLE_DOMAIN
 path_url=/
 is_public=$YNH_APP_ARG_IS_PUBLIC
+admin=$YNH_APP_ARG_ADMIN
+password=$YNH_APP_ARG_PASSWORD
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -53,6 +55,8 @@ ynh_script_progression --message="Storing installation settings..." --time --wei
 ynh_app_setting_set --app=$app --key=domain --value=$domain
 ynh_app_setting_set --app=$app --key=consoledomain --value=$consoledomain
 ynh_app_setting_set --app=$app --key=path --value=$path_url
+ynh_app_setting_set --app=$app --key=admin --value=$admin
+ynh_app_setting_set --app=$app --key=password --value=$password
 
 #=================================================
 # STANDARD MODIFICATIONS
@@ -97,7 +101,7 @@ ynh_script_progression --message="Configuring NGINX web server..." --time --weig
 # Create a dedicated NGINX config for the server
 ynh_add_nginx_config
 
-# Create a dedicated NGINX config got the console
+# Create a dedicated NGINX config for the console
 
 finalnginxconf="/etc/nginx/conf.d/$consoledomain.d/$app.conf"
 
@@ -110,12 +114,6 @@ fi
 ynh_add_config --template="$YNH_APP_BASEDIR/conf/nginx2.conf" --destination="$finalnginxconf"
 
 ynh_systemd_action --service_name=nginx --action=reload
-
-#=================================================
-# SPECIFIC SETUP
-#=================================================
-# ...
-#=================================================
 
 #=================================================
 # CREATE DATA DIRECTORY
@@ -154,7 +152,7 @@ ynh_use_logrotate
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..." --time --weight=1
 
-yunohost service add $app --description="A short description of the app" --log="/var/log/$app/$app.log"
+yunohost service add $app --description="S3 compatible object storage" --log="/var/log/$app/$app.log"
 
 #=================================================
 # START SYSTEMD SERVICE
@@ -169,24 +167,15 @@ ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$ap
 #=================================================
 ynh_script_progression --message="Configuring permissions..." --time --weight=1
 
+ynh_permission_create --permission="console" --url="$consoledomain/" --allowed="$admin" --label="MinIO Console" --show_tile="true"
+
 # Make app public if necessary
 if [ $is_public -eq 1 ]
 then
 	# Everyone can access the app.
 	# The "main" permission is automatically created before the install script.
-	ynh_permission_update --permission="main" --add="visitors"
+	ynh_permission_update --permission="console" --add="visitors"
 fi
-
-### N.B. : the following extra permissions only make sense if your app
-### does have for example an admin interface or an API.
-
-# Only the admin can access the admin panel of the app (if the app has an admin panel)
-#ynh_permission_create --permission="admin" --url="/admin" --allowed=$admin
-
-# Everyone can access the API part
-# We don't want to display the tile in the SSO so we put --show_tile="false"
-# And we don't want the YunoHost admin to be able to remove visitors group to this permission, so we put --protected="true"
-ynh_permission_create --permission="console" --url="$consoledomain/" --allowed="visitors" --show_tile="false"
 
 #=================================================
 # RELOAD NGINX
