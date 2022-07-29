@@ -36,7 +36,10 @@
             },
             {
                 "name": "console_domain",
-                "type": "domain"
+                "type": "domain",
+                "help": {
+                    "en": "Choose domain for the console"
+                }
             },
             {
                 "name": "is_public",
@@ -44,6 +47,18 @@
                 "default": true,
                 "help": {
                     "en": "Make the console publically accessible"
+                }
+            },
+            {
+                "name": "admin",
+                "type": "user"
+            },
+            {
+                "name": "password",
+                "type": "password",
+                "help": {
+                    "en": "Admin user password",
+                    "fr": "Utilisez le champ aide pour ajouter une information à l'intention de l'administrateur à propos de cette question."
                 }
             }
         ]
